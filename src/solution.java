@@ -1,5 +1,9 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.io.BufferedInputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class solution {
 
@@ -171,9 +175,90 @@ public class solution {
         return dep;
     }
 
-    public static void main(String[] args) {
+    static class dvalue {
+        int sum = 0;
+        double ave = 0;
+        Set<String> store = new HashSet<>();
+        dvalue (String s, int x) {
+            sum = x;
+            ave = (double) x;
+            store.add(s);
+        }
+    }
+    /**Storing item info*/
+    public static void code4() throws ParseException {
+        Map<Date, dvalue> map = new TreeMap<>();
+        /**pre-processing*/
+        Scanner stdin = new Scanner(new BufferedInputStream(System.in));
+        while (stdin.hasNext()) {
+            String cur = stdin.nextLine();
+            String[] info = cur.split(",");
+            /**processing the date*/
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = formatter.parse(info[0]);
+            int num = Integer.valueOf(info[1]);
+            String name = String.valueOf(info[2]);
+            if (!map.containsKey(date)) {
+                map.put(date, new dvalue(name, num));
+                continue;
+            }
+            /**adding record to this date*/
+            dvalue temp = map.get(date);
+            temp.sum += num;
+            /**if not contains, just add into that*/
+            if (!temp.store.contains(name)) {
+                temp.store.add(name);
+            }
+            temp.ave = (double) temp.sum / temp.store.size();
+            /**put back*/
+            map.put(date, temp);
+        }
+        /**TreeMap is going to do sorting automatically*/
+        for (Date d : map.keySet()) {
+            dvalue temp = map.get(d);
+            System.out.println(d + "," + temp.sum + "," + temp.ave + "," + temp.store.size());
+        }
+    }
+
+    static final String NEW_FORMAT = "yyyy-MM-dd";
+    static final SimpleDateFormat formatter = new SimpleDateFormat(NEW_FORMAT);
+    public static void code5(String[] input) throws ParseException {
+        Map<Date, dvalue> map = new TreeMap<>();
+        /**pre-processing*/
+        for (String a : input) {
+            String[] info = a.split(",");
+            /**processing the date*/
+            Date date = formatter.parse(info[0]);
+            int num = Integer.valueOf(info[1]);
+            String name = String.valueOf(info[2]);
+            if (!map.containsKey(date)) {
+                map.put(date, new dvalue(name, num));
+                continue;
+            }
+            /**adding record to this date*/
+            dvalue temp = map.get(date);
+            temp.sum += num;
+            /**if not contains, just add into that*/
+            if (!temp.store.contains(name)) {
+                temp.store.add(name);
+            }
+            temp.ave = (double) temp.sum / temp.store.size();
+            /**put back*/
+            map.put(date, temp);
+        }
+        /**TreeMap is going to do sorting automatically*/
+
+        for (Date d : map.keySet()) {
+            dvalue temp = map.get(d);
+            System.out.println(formatter.format(d) + "," + temp.sum + "," + String.format("%.2f", temp.ave) + "," + temp.store.size());
+        }
+    }
+
+    public static void main(String[] args) throws ParseException {
 //        System.out.println(code1("20 3 4"));
 //        System.out.println(code2("IBM cognitive computing|IBM \"cognitive\" computing is a revolution|  ibm cognitive  computing|'IBM Cognitive Computing' is a revolution?"));
-        System.out.println(code3("Frank->Mary,Mary->Sam,Mary->Bob,Sam->Katie,Sam->Pete,Bob->John,Bob,Katie"));
+//        System.out.println(code3("Frank->Mary,Mary->Sam,Mary->Bob,Sam->Katie,Sam->Pete,Bob->John,Bob,Katie"));
+        String[] input = new String[]{"2016-04-01,4,pies", "2016-04-01,6,pies", "2016-04-01,2,cakes", "2016-04-01,12,cookies","2016-04-02,7,pumpkins","2016-04-02,2,peaches", "2016-04-03,6,apples", "2016-04-03,23,pies","2016-04-03,4,cookies","2016-04-03,9,peaches"};
+        code5(input);
     }
 }
