@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class solution {
 
     public static String code1(String source) {
@@ -96,9 +99,81 @@ public class solution {
         }
         return sb.toString().substring(0, sb.length() - 1);
     }
+    /*****************************************************/
+    static class Node {
+        String name;
+        Node parent;
+        Node (String s) {
+            name = s;
+            parent = null;
+        }
+    }
+    private static Map<String, Node> maps;
+
+    public static String code3(String input) {
+        /**preprocessing, loaded into nodes*/
+        String[] array = input.split(",");
+        String p = array[array.length - 1];
+        String q = array[array.length - 2];
+        maps = new HashMap<>();
+        for (int i = 0; i < array.length - 2; i++) {
+            String[] temp = array[i].split("->");
+            if (!maps.containsKey(temp[0])) {
+                maps.put(temp[0], new Node(temp[0]));
+            }
+            if (!maps.containsKey(temp[1])) {
+                maps.put(temp[1], new Node(temp[1]));
+            }
+            /**adding parent relationship*/
+            Node cur = maps.get(temp[1]);
+            cur.parent = maps.get(temp[0]);
+            maps.put(temp[1], cur);
+        }
+        return LCA(maps.get(p), maps.get(q));
+    }
+
+    private static String LCA(Node p, Node q) {
+        /**see their difference in depth*/
+        int depth1 = depth(p);
+        int depth2 = depth(q);
+        int difference = depth1 - depth2;
+        if (difference < 0) {
+            Node temp = p;
+            p = q;
+            q = temp;
+            difference = - difference;
+        }
+        /**make them the same level*/
+        while (difference-- != 0) {
+            p = p.parent;
+        }
+        /**then, if equal*/
+        if (p == q) {
+            return q.parent.name;
+        }
+        /**if not equal*/
+        while (p != null && q != null) {
+            if (p == q) {
+                return p.name;
+            }
+            p = p.parent;
+            q = q.parent;
+        }
+        return null;
+    }
+
+    private static int depth(Node x) {
+        int dep = 0;
+        while (x != null) {
+            dep++;
+            x = x.parent;
+        }
+        return dep;
+    }
 
     public static void main(String[] args) {
 //        System.out.println(code1("20 3 4"));
-        System.out.println(code2("IBM cognitive computing|IBM \"cognitive\" computing is a revolution|  ibm cognitive  computing|'IBM Cognitive Computing' is a revolution?"));
+//        System.out.println(code2("IBM cognitive computing|IBM \"cognitive\" computing is a revolution|  ibm cognitive  computing|'IBM Cognitive Computing' is a revolution?"));
+        System.out.println(code3("Frank->Mary,Mary->Sam,Mary->Bob,Sam->Katie,Sam->Pete,Bob->John,Bob,Katie"));
     }
 }
