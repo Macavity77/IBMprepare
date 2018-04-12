@@ -254,11 +254,82 @@ public class solution {
         }
     }
 
+    /**
+     * Pharmacy Store, Trie Tree in Java
+     * */
+    private static class TrieNode{
+        char val;
+        boolean isLeaf;
+        TreeMap<Character, TrieNode> children = new TreeMap<>();
+        public TrieNode(char c) {
+            val = c;
+            isLeaf = false;
+        }
+    }
+
+    static TrieNode root = new TrieNode(' ');
+    public static void insert(String word) {
+        TreeMap<Character, TrieNode> children = root.children;
+        char[] bank = word.toLowerCase().toCharArray();
+        for (int i = 0; i < bank.length; i++) {
+            TrieNode temp;
+            if (children.containsKey(bank[i])) {
+                temp = children.get(bank[i]);
+            } else {
+                temp = new TrieNode(bank[i]);
+                children.put(bank[i], temp);
+            }
+            children = temp.children;
+            if (i == word.length() - 1) {
+                temp.isLeaf = true;
+            }
+        }
+    }
+
+    public static List<String> getWordsForPrefix(String prefix) {
+        TrieNode cur = root;
+        List<String> result = new ArrayList<>();
+        char[] bank = prefix.toLowerCase().toCharArray();
+        for (int i = 0; i < bank.length; i++) {
+            if (!cur.children.containsKey(bank[i])) {
+                return result;
+            }
+            cur = cur.children.get(bank[i]);
+        }
+        helper(cur, prefix, result, 3);
+        return result;
+    }
+
+    private static void helper(TrieNode cur, String s, List<String> result, int limit) {
+        if (result.size() > limit - 1) {
+            return;
+        }
+        if (cur != null) {
+            if (cur.isLeaf == true) {
+                result.add(s);
+            }
+        }
+        for (char c : cur.children.keySet()) {
+            String temp = s + c;
+            helper(cur.children.get(c),temp, result, limit);
+        }
+        return;
+    }
+
+
+    /************************************************************************/
+
     public static void main(String[] args) throws ParseException {
 //        System.out.println(code1("20 3 4"));
 //        System.out.println(code2("IBM cognitive computing|IBM \"cognitive\" computing is a revolution|  ibm cognitive  computing|'IBM Cognitive Computing' is a revolution?"));
 //        System.out.println(code3("Frank->Mary,Mary->Sam,Mary->Bob,Sam->Katie,Sam->Pete,Bob->John,Bob,Katie"));
-        String[] input = new String[]{"2016-04-01,4,pies", "2016-04-01,6,pies", "2016-04-01,2,cakes", "2016-04-01,12,cookies","2016-04-02,7,pumpkins","2016-04-02,2,peaches", "2016-04-03,6,apples", "2016-04-03,23,pies","2016-04-03,4,cookies","2016-04-03,9,peaches"};
-        code5(input);
+//        String[] input = new String[]{"2018-06-24,1,people","2016-04-01,4,pies", "2016-04-01,6,pies", "2016-04-01,2,cakes", "2016-04-01,12,cookies","2016-04-02,7,pumpkins","2016-04-02,2,peaches", "2016-04-03,6,apples", "2016-04-03,23,pies","2016-04-03,4,cookies","2016-04-03,9,peaches"};
+//        code5(input);
+        String[] pharm = new String[]{"asperin", "aspeor", "aap", "bsje", "bsfjke", "bsdjfe", "cvfr", "cvfro", "cvfropd", "cdase", "asperins"};
+        for (String s : pharm) {
+            insert(s);
+        }
+        List<String> result = getWordsForPrefix("a");
+        System.out.println(result.toString());
     }
 }
