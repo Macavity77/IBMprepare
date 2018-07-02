@@ -6,8 +6,7 @@ Big picture:
 IBM is a poineer in internet technology.  
 Such Cloud service. Key to the future technongy.
 IBM has already become one of the poinner in this area.
-So, from those perspectiflc, I would really like to explore 
-future career opportunity with IBM
+
 
 Personally and more precisaly:
 I had heard my friends' experience at the same internship program at IBM
